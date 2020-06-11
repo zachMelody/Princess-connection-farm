@@ -1,7 +1,8 @@
 import cv2
-import numpy as np
-import matplotlib.pylab as plt
 import imutils
+import matplotlib.pylab as plt
+import numpy as np
+
 from utils import Log
 
 DEBUG = False
@@ -39,8 +40,9 @@ class UIMatcher:
         result = cv2.matchTemplate(template, screen, cv2.TM_CCOEFF_NORMED)
         _, max_val, _, max_loc = cv2.minMaxLoc(result)
         # 计算坐标
-        res['x'] = max_loc[0] + width / 2
-        res['y'] = max_loc[1] + height / 2
+        h, w = template.shape[0:2:1]
+        res['x'] = max_loc[0] + w / 2
+        res['y'] = max_loc[1] + h / 2
         res['r'] = max_val
         # DEBUG
         if DEBUG:

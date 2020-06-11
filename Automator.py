@@ -1,13 +1,16 @@
-import uiautomator2 as u2
-import time
-from cv import *
 import glob
+import time
+
+import uiautomator2 as u2
+
+from cv import *
 from utils.Log import color_log as log
 
 
 class Automator:
     BASE_IMG_PATH = 'tw_img/'
     MAX_COUNTER = 5
+    CHECK_COUNTER = 3
 
     def __init__(self):
         """
@@ -18,6 +21,7 @@ class Automator:
         self.appRunning = False
         self.log = log
         self.failCounter = 0
+        self.check_again = True
 
     def start(self):
         """
@@ -36,14 +40,14 @@ class Automator:
                 self.appRunning = False
                 continue
 
-    def find_image(self, image_path, threshold=0.90):
+    def find_image(self, image_path, threshold=0.90, try_time=5):
         """
         查找当前屏幕上是否有图像
         :param image_path: 图像路径
         :param threshold: 阈值
         :return:
         """
-        if self.failCounter > Automator.MAX_COUNTER:
+        if self.failCounter >= try_time:
             self.failCounter = 0
             return -1, -1
 
@@ -53,19 +57,45 @@ class Automator:
         if result['r'] > threshold:
             self.failCounter = 0
             self.log.info("查找成功")
+            self.log.debug(result)
             return result['x'], result['y']
         else:
             self.log.error("查找失败")
-            time.sleep(8)
-            return self.find_image(image_path)
+            self.failCounter += 1
+            time.sleep(5)
+            return self.find_image(image_path, try_time=try_time)
 
     def find_and_click(self, image_path):
-        x, y = self.find_image(image_path)
+        """
+        检测图像并点击，完成点击后再次检测，防止未加载完毕导致的点击无效
+        :param image_path: 图像路径
+        :return:
+        """
+        # TODO: 只检测一次，可能有误差->自定义次数
+        if self.check_again:
+            x, y = self.find_image(image_path)
+        else:
+            x, y = self.find_image(image_path, try_time=1)
+
         if x == -1 and y == -1:
-            self.log.error("点击失败")
+            if self.check_again:  # 首次检测
+                self.log.error("点击失败")
+            elif not self.check_again:  # 变动检测
+                self.check_again = True
+                self.log.debug("检测到场景变动，点击成功")
         else:
             time.sleep(5)
             self.d.click(x, y)
+            time.sleep(3)
+            if self.check_again:  # 检测点击生效与否
+                self.log.debug("尝试检测场景变动")
+                self.check_again = False
+                self.find_and_click(image_path)
+            elif not self.check_again:  # 点击未生效
+                self.log.debug("点击未生效，尝试再次点击")
+                self.d.click(x, y)
+                self.check_again = True
+                time.sleep(3)
 
     def check_equipment(self, template_path):
         """

@@ -1,5 +1,5 @@
-import logging.handlers
 import logging
+import logging.handlers
 
 BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE = range(8)
 
@@ -44,7 +44,7 @@ class ColoredFormatter(logging.Formatter):
 # Custom logger class with multiple destinations
 class ColoredLogger(logging.Logger):
     fmt = ("%(asctime)s %(filename)s %(funcName)s %(lineno)s "
-                            "%(levelname)s : %(message)s", "%H:%M:%S")
+           "%(levelname)s : %(message)s", "%H:%M:%S")
     FORMAT = "($BOLD%(filename)s$RESET:%(lineno)d)" \
              "[%(funcName)s]" \
              "[%(levelname)-18s] " \
