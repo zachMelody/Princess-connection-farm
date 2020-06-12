@@ -33,3 +33,7 @@
 ```
 ## 使用方法
 TODO
+## References
+* [SimonShi1994/Princess-connection-farm](https://github.com/SimonShi1994/Princess-connection-farm) 
+* [https://redive.estertion.win/](https://redive.estertion.win/) 
+* [openatx/uiautomator2](https://github.com/openatx/uiautomator2)
