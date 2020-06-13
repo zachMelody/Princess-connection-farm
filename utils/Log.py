@@ -47,7 +47,7 @@ class ColoredLogger(logging.Logger):
            "%(levelname)s : %(message)s", "%H:%M:%S")
     FORMAT = "($BOLD%(filename)s$RESET:%(lineno)d)" \
              "[%(funcName)s]" \
-             "[%(levelname)-18s] " \
+             "[%(levelname)-15s] " \
              "%(message)s "
     COLOR_FORMAT = formatter_message(FORMAT, True)
 

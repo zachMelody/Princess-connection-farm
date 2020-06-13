@@ -6,6 +6,7 @@ from utils.Log import color_log as log
 
 
 class PCR:
+    # TODO: 打开模拟器 -> 连接加速器 -> 打开游戏
     def __init__(self):
         self.app = Automator.Automator()
 
@@ -25,12 +26,20 @@ class PCR:
         log.info("正在进入游戏")
         x, y = self.app.find_image(img_name)
         self.app.d.click(x + 50, y + 50)
+        time.sleep(5)
+        log.info("尝试关闭账号绑定窗口")
+        self.app.d.click(2, 2)
+        time.sleep(5)  # 加载资源需要等待
+
+    def skip_daily_rewards(self):
+        img_name = 'tw_img/btn_skip_daily_rewards.jpg'
+        log.info("尝试关闭登录奖励窗口")
+        self.app.find_and_click(img_name)
 
     def close_announcement(self):
         # 关闭主页公告
         img_name = 'tw_img/btn_main_close.jpg'
         log.info("正在关闭主页公告")
-        # time.sleep(10)
         self.app.find_and_click(img_name)
 
     def enter_guild(self):
@@ -52,10 +61,22 @@ class PCR:
                 time.sleep(3)
 
     def enter_game(self):
+        """
+        进入到游戏主页
+        :return:
+        """
         self.enter_game_step_1()
+        self.skip_daily_rewards()
         self.close_announcement()
+
+    def enter_guild_and_donate(self):
+        """
+        转移到公会进行捐赠
+        :return:
+        """
         self.enter_guild()
         self.wait_to_enter_guild()
+        self.donate()
 
     def get_inventory(self):
         # TODO: 获取库存信息
@@ -64,14 +85,23 @@ class PCR:
         print(result)
 
     def donate(self):
-        # TODO：执行捐赠
-        pass
-
-    def _check_donate_status(self):
-        # TODO: 检测捐赠状态/物品信息/关卡
-        pass
+        """
+        从当前界面开始捐赠
+        :return:
+        """
+        # TODO：检测捐赠进度/装备信息
+        img_name = "tw_img/btn_donate_available.jpg"  # 检测捐赠状态
+        if self.app.is_image_exist(img_name):  # 可捐赠
+            self.app.find_and_click(img_name)
+            self.app.find_and_click("tw_img/btn_donate_to_max.jpg")
+            self.app.find_and_click("tw_img/btn_donate_ok.jpg")
+            self.app.find_and_click("tw_img/btn_donate_finish.JPG")
+            log.info("捐赠完毕")
+        else:
+            log.error("未检测到捐赠按钮")
 
 
 if __name__ == '__main__':
     pcr = PCR()
     pcr.enter_game()
+    pcr.enter_guild_and_donate()

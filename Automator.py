@@ -9,7 +9,7 @@ from utils.Log import color_log as log
 
 class Automator:
     BASE_IMG_PATH = 'tw_img/'
-    MAX_COUNTER = 5
+    MAX_COUNTER = 10  # 最大查找重试次数
     CHECK_COUNTER = 3
 
     def __init__(self):
@@ -42,12 +42,12 @@ class Automator:
 
     def find_image(self, image_path, threshold=0.90, try_time=5):
         """
-        查找当前屏幕上是否有图像
+        查找当前屏幕上是否有图像，并返回坐标
         :param image_path: 图像路径
         :param threshold: 阈值
-        :return:
+        :return: x, y
         """
-        if self.failCounter >= try_time:
+        if self.failCounter > try_time:
             self.failCounter = 0
             return -1, -1
 
@@ -60,7 +60,8 @@ class Automator:
             self.log.debug(result)
             return result['x'], result['y']
         else:
-            self.log.error("查找失败")
+            if try_time != 1:  # 排除场景变动检测的提示
+                self.log.error("查找失败，正在重试...")
             self.failCounter += 1
             time.sleep(5)
             return self.find_image(image_path, try_time=try_time)
@@ -84,9 +85,9 @@ class Automator:
                 self.check_again = True
                 self.log.debug("检测到场景变动，点击成功")
         else:
-            time.sleep(5)
+            time.sleep(2)
             self.d.click(x, y)
-            time.sleep(3)
+            time.sleep(2)
             if self.check_again:  # 检测点击生效与否
                 self.log.debug("尝试检测场景变动")
                 self.check_again = False
@@ -121,3 +122,12 @@ class Automator:
     def get_screen_state(self, screen):
         # TODO: 判断当前状态
         pass
+
+    def is_image_exist(self, image_path):
+        """
+        查找当前屏幕是否存在
+        :param image_path: 模板路径
+        :return: <bool>
+        """
+        x, y = self.find_image(image_path)
+        return x != -1 and y != -1
