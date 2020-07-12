@@ -80,6 +80,8 @@ class PCR:
 
     def get_inventory(self):
         # TODO: 获取库存信息
+        # 96*96 -> 128*128 540*960
+        # 比例 [屏幕高]/10/[模板高]
         app = self.app
         result = app.check_equipment("equipment_img")
         print(result)
@@ -103,5 +105,4 @@ class PCR:
 
 if __name__ == '__main__':
     pcr = PCR()
-    pcr.enter_game()
-    pcr.enter_guild_and_donate()
+    pcr.get_inventory()

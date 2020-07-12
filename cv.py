@@ -6,7 +6,7 @@ import numpy as np
 from utils import Log
 
 DEBUG = False
-
+ENABLE_CALC_TIME = False
 
 class UIMatcher:
     @staticmethod
@@ -102,9 +102,10 @@ class UIMatcher:
         :param step: 比例划分次数（数字越大准确度越高，但是耗时）
         :return: {'r': 相似度, 'x': x坐标, 'y': y坐标}
         """
-        if DEBUG:
+        if ENABLE_CALC_TIME:
             import time
             start_time = time.time()
+            print(start_time)
         # 旋转屏幕截图
         if screen.shape[0] > screen.shape[1]:
             screen = UIMatcher.RotateClockWise90(screen)
@@ -132,16 +133,16 @@ class UIMatcher:
                 continue
             # 首先进行边缘检测，然后执行模板检测，接着获取最小外接矩形
             edged = cv2.Canny(resized, 50, 200)
-            plt.imshow(edged)
+            # plt.imshow(edged)
             result = cv2.matchTemplate(template, edged, cv2.TM_CCOEFF_NORMED)
             (_, maxVal, _, maxLoc) = cv2.minMaxLoc(result)
 
             # 结果可视化
             if DEBUG:  # 绘制矩形框并显示结果
-                clone = np.dstack([edged, edged, edged])
-                cv2.rectangle(clone, (maxLoc[0], maxLoc[1]), (maxLoc[0] + tW, maxLoc[1] + tH), (0, 0, 255), 2)
-                plt.imshow(clone)
-                plt.pause(0.01)
+                # clone = np.dstack([edged, edged, edged])
+                # cv2.rectangle(clone, (maxLoc[0], maxLoc[1]), (maxLoc[0] + tW, maxLoc[1] + tH), (0, 0, 255), 2)
+                # plt.imshow(clone)
+                # plt.pause(0.01)
                 Log.color_log.info("> 比例：%.2f -> 相似度：%.2f", scale, maxVal)
 
             # 如果发现一个新的关联值则进行更新
@@ -159,9 +160,15 @@ class UIMatcher:
             matched_screen = cv2.cvtColor(matched_screen, cv2.COLOR_BGR2RGB)
             plt.imshow(matched_screen)
             plt.pause(0.01)
-            plt.imsave("res_" + template_path, matched_screen)
-            # end_time = time.time()
-            # Log.color_log.debug("耗时：%.2f", end_time - start_time)
+            try:
+                plt.imsave("res_" + template_path, matched_screen)
+            except FileNotFoundError:
+                import os
+                os.makedirs("res_" + template_path)
+        if ENABLE_CALC_TIME:
+            end_time = time.time()
+            print(end_time)
+            Log.color_log.debug("耗时：%.2f", end_time - start_time)
 
         # 计算坐标
         res = dict()

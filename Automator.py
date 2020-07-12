@@ -104,14 +104,17 @@ class Automator:
         :param template_path: 模板目录
         :return: {'r': 相似度, 'x': x坐标, 'y': y坐标， 'path': 模板路径}
         """
-        THRESHOLD = 0.3
+        THRESHOLD = 0.55
         found = None
         return_list = list()
+
+        screen = self.d.screenshot(format="opencv")
         # 遍历所有的图片寻找模板
         for imagePath in glob.glob(template_path + "/*"):
             self.log.debug("> " + imagePath)
-            screen = self.d.screenshot(format="opencv")
-            result = UIMatcher.multi_scale_template_match(screen, imagePath)
+            # result = UIMatcher.multi_scale_template_match(screen, imagePath)
+            result = UIMatcher.multi_scale_template_match(
+                screen, imagePath, min_scale=128 / 96, max_scale=128 / 96, step=1)
 
             if result['r'] > THRESHOLD:
                 result['path'] = imagePath
