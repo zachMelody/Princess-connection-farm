@@ -18,6 +18,10 @@
     |    |----test_equipment_img\
     |    |----__init__.py
     |
+    |----tessdata\              >tessdata训练模型
+    |    |----pcr2.traineddata
+    |    |----README.md
+    |
     |----tw_img\                >按钮图片
     |
     |----unique_weapon_img\     >专武图片
