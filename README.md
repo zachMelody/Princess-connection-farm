@@ -26,6 +26,13 @@
     |    |----DirectionTree.py
     |    |----Log.py
     |
+    |----ocr\                   >OCR模块
+    |    |----divide.py         >图片切割
+    |    |----ocr.py            >图片处理、识别
+    |    |----res\
+    |    |----train\            >Tesseract字库训练相关
+    |    |    |----output\
+    |
     |----Automator.py           >模拟器层
     |----cv.py                  >图像识别层             
     |----PCR.py                 >入口文件
@@ -37,3 +44,4 @@ TODO
 * [SimonShi1994/Princess-connection-farm](https://github.com/SimonShi1994/Princess-connection-farm) 
 * [https://redive.estertion.win/](https://redive.estertion.win/) 
 * [openatx/uiautomator2](https://github.com/openatx/uiautomator2)
+* [tesseract-ocr/tesseract](https://github.com/tesseract-ocr/tesseract)
