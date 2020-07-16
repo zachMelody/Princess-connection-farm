@@ -63,7 +63,6 @@ class PCR:
     def enter_game(self):
         """
         进入到游戏主页
-        :return:
         """
         self.enter_game_step_1()
         self.skip_daily_rewards()
@@ -72,24 +71,24 @@ class PCR:
     def enter_guild_and_donate(self):
         """
         转移到公会进行捐赠
-        :return:
         """
         self.enter_guild()
         self.wait_to_enter_guild()
         self.donate()
 
     def get_inventory(self):
-        # TODO: 获取库存信息
+        # 获取库存信息
         # 96*96 -> 128*128 540*960
         # 比例 [屏幕高]/10/[模板高]
         app = self.app
-        result = app.check_equipment("equipment_img")
-        print(result)
+        result = app.check_equipment("equipment_img")  # 获取物品坐标、ID
+        for item in result:
+            print("*物品ID：{id} -> 数量：{amount}".format(id=item['path'], amount=item['amount']))
+        return result
 
     def donate(self):
         """
         从当前界面开始捐赠
-        :return:
         """
         # TODO：检测捐赠进度/装备信息
         img_name = "tw_img/btn_donate_available.jpg"  # 检测捐赠状态
@@ -105,4 +104,5 @@ class PCR:
 
 if __name__ == '__main__':
     pcr = PCR()
-    pcr.get_inventory()
+    res = pcr.get_inventory()
+    # print(res)

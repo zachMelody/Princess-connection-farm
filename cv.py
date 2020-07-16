@@ -8,6 +8,7 @@ from utils import Log
 DEBUG = False
 ENABLE_CALC_TIME = False
 
+
 class UIMatcher:
     @staticmethod
     def RotateClockWise90(img):
@@ -175,6 +176,7 @@ class UIMatcher:
         res['x'] = (startX + endX) / 2
         res['y'] = (startY + endY) / 2
         res['r'] = found[0]
+        res['x0'], res['x1'], res['y0'], res['y1'] = startX, endX, startY, endY
         Log.color_log.debug(res)
 
         return res

@@ -213,3 +213,4 @@ _deprecated/
 .idea/
 main.py
 _deprecated/img
+ocr/ignore

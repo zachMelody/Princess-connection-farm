@@ -4,6 +4,7 @@ import time
 import uiautomator2 as u2
 
 from cv import *
+from ocr import ocr
 from utils.Log import color_log as log
 
 
@@ -113,12 +114,19 @@ class Automator:
         for imagePath in glob.glob(template_path + "/*"):
             self.log.debug("> " + imagePath)
             # result = UIMatcher.multi_scale_template_match(screen, imagePath)
+            w, h = screen.shape[:2]
+            item_w = w / 10
+            scale = 128 / item_w  # TODO：128为模板宽，应修改为自动检测
             result = UIMatcher.multi_scale_template_match(
-                screen, imagePath, min_scale=128 / 96, max_scale=128 / 96, step=1)
+                screen, imagePath, min_scale=scale, max_scale=scale, step=1)
 
             if result['r'] > THRESHOLD:
                 result['path'] = imagePath
                 return_list.append(result)
+        # 切割物品图标
+        ocr.divide(return_list, screen)
+        # 切割物品数量, 识别数字
+        ocr.ocr(return_list)
 
         return return_list
 
